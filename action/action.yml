@@ -1,0 +1,78 @@
+name: Akeyless Railway Sync
+description: Sync secrets from Akeyless to Railway environment variables
+branding:
+  icon: train
+  color: purple
+
+inputs:
+  akeyless-access-id:
+    description: Akeyless access ID
+    required: true
+  akeyless-access-key:
+    description: Akeyless access key
+    required: true
+  akeyless-secret-path:
+    description: Akeyless folder path containing secrets to sync
+    required: true
+    default: /
+  akeyless-api-url:
+    description: Akeyless API URL
+    required: false
+    default: https://api.akeyless.io
+  railway-api-token:
+    description: Railway account or workspace API token
+    required: true
+  railway-project-id:
+    description: Railway project ID
+    required: true
+  railway-environment-id:
+    description: Railway environment ID
+    required: true
+  railway-service-id:
+    description: Railway service ID (omit for shared environment variables)
+    required: false
+    default: ""
+  delete-orphaned:
+    description: Delete Railway variables not present in Akeyless
+    required: false
+    default: "false"
+  skip-deploys:
+    description: Do not trigger Railway redeploys when updating variables
+    required: false
+    default: "false"
+  dry-run:
+    description: Preview changes without writing to Railway
+    required: false
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+
+    - name: Install sync CLI
+      shell: bash
+      run: npm install -g github:akeyless-community/railway-akeyless-sync
+
+    - name: Sync secrets
+      shell: bash
+      env:
+        AKEYLESS_ACCESS_ID: ${{ inputs.akeyless-access-id }}
+        AKEYLESS_ACCESS_KEY: ${{ inputs.akeyless-access-key }}
+        AKEYLESS_SECRET_PATH: ${{ inputs.akeyless-secret-path }}
+        AKEYLESS_API_URL: ${{ inputs.akeyless-api-url }}
+        RAILWAY_API_TOKEN: ${{ inputs.railway-api-token }}
+        RAILWAY_PROJECT_ID: ${{ inputs.railway-project-id }}
+        RAILWAY_ENVIRONMENT_ID: ${{ inputs.railway-environment-id }}
+        RAILWAY_SERVICE_ID: ${{ inputs.railway-service-id }}
+        DELETE_ORPHANED: ${{ inputs.delete-orphaned }}
+        SKIP_DEPLOYS: ${{ inputs.skip-deploys }}
+      run: |
+        ARGS="sync"
+        if [ "${{ inputs.dry-run }}" = "true" ]; then
+          ARGS="$ARGS --dry-run"
+        fi
+        akeyless-railway-sync $ARGS

@@ -1,0 +1,52 @@
+{
+  "name": "@akeyless-community/railway-sync",
+  "version": "0.1.0",
+  "description": "Sync secrets from Akeyless to Railway service or shared environment variables",
+  "type": "module",
+  "license": "Apache-2.0",
+  "author": "Akeyless Community",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akeyless-community/railway-akeyless-sync.git"
+  },
+  "homepage": "https://github.com/akeyless-community/railway-akeyless-sync#readme",
+  "bin": {
+    "akeyless-railway-sync": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "action",
+    "examples"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli.ts",
+    "sync": "tsx src/cli.ts sync",
+    "lint": "tsc --noEmit",
+    "test": "node --import tsx --test src/*.test.ts",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "keywords": [
+    "akeyless",
+    "railway",
+    "secrets",
+    "sync",
+    "github-actions",
+    "devops"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
